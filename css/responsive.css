@@ -1,0 +1,176 @@
+
+/*============================
+Max - Width Query
+============================*/
+
+@media (max-width: 1700px){
+ 	
+ 	.cv_banner_bg,
+	.cv_banner_bg::before,
+	.cv_feature_bg,
+	.cv_layout_wrapper,
+	.cv_selling_bg,
+	.cv_footer_wrapper,
+	.cv_compatibility_wrapper,
+	.cv_compatibility_wrapper::before
+	{
+		background-size: cover;
+	}
+
+	.cv_pages_img img {
+	    object-fit: cover;
+	    min-height: unset;
+	    max-height: unset;
+	}
+
+}
+
+@media (max-width:1499.98px){
+	
+	
+}
+
+@media (max-width:1399.98px){
+
+	.cv_compat_desktop{
+		display: none;
+	}
+
+	.cv_compat_mob{
+		display: block;
+	}
+}
+
+@media (max-width:1199.98px){
+
+	.cv_banner_img{
+		display: none;
+	}
+	
+	.cv_nav_item {
+    	gap: 50px;
+	}
+
+	.cv_nav_item ul {
+    	gap: 30px;
+	}
+
+	h1{
+		font-size: 70px;
+	}
+
+	.cv_footer_img{
+		display: none;
+	}
+}
+
+
+@media (max-width:991.98px){
+
+	.cv_nav_btn span, .cv_res_logo{
+		display: block;
+	}
+
+	.cv_nav_item ul {
+	    position: fixed;
+	    left: -280px;
+	    top: 0;
+	    height: 100vh;
+	    background-color: #171c2a;
+	    width: 280px;
+	    padding: 30px 20px;
+	    margin: 0;
+	    z-index: 111;
+	    transition: all 0.5s;
+	    flex-direction: column;
+	    gap: 20px;
+	}
+
+	.menu-open .cv_nav_item ul {
+    	left: 0;
+	}
+
+	.cv_res_logo{
+		margin-bottom: 20px;
+	}
+
+	.cv_nav_item ul li a {
+	    padding: 0 0 10px;
+	    width: 100%;
+	    display: inline-flex;
+	    border-bottom: 1px solid var(--cv-primary-color);
+	}
+
+	.cv_banner_bg{
+		padding: 50px 15px;
+	}
+
+	section, .cv_homepages_wrapper, .cv_feature_bg, .cv_selling_bg{
+		padding: 50px 0;
+	}
+
+	.cv_feature_wrapper{
+		padding-bottom: 50px;
+	}
+   
+}
+
+@media (max-width:767.98px){
+
+	h1{
+		font-size: 50px;
+	}
+
+	.container-fluid {
+    	padding-right: var(--bs-gutter-x, .75rem);
+    	padding-left: var(--bs-gutter-x, .75rem);
+	}
+
+	.cv_homepages_content span{
+		min-width: 190px;
+	}
+}
+
+@media (max-width:575.98px){
+
+	body{
+		font-size: 14px;
+	}
+
+	h1{
+		font-size: 30px;
+	}
+
+	h3, .cv_footer_content h3{
+		font-size: 26px;
+	}
+
+	h4{
+		font-size: 18px;
+	}
+
+	h5{
+		font-size: 16px;
+	}
+
+	.cv_btn{
+		min-width: fit-content;
+	}
+
+	.cv_banner_bg{
+		padding: 30px 15px;
+	}
+
+	.cv_selling_content li{
+		padding: 0 15px 12px;
+	}
+	
+}
+
+@media (max-width:475.98px){
+
+	.cv_nav_btn .cv_btn{
+		display: none;
+	}
+}
+
