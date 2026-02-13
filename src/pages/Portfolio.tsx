@@ -106,7 +106,7 @@ const themes: Record<ThemeMode, Record<string, string>> = {
 function SectionTitle({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="text-center">
-      <h2 className="font-['Poppins'] text-[44px] font-bold leading-[1.06] tracking-[-0.03em] text-[var(--text-title)]">
+      <h2 className="font-['Poppins'] text-[34px] font-bold leading-[1.06] tracking-[-0.03em] text-[var(--text-title)] sm:text-[44px]">
         {title}
       </h2>
       <p className="mt-1 bg-[var(--subtitle-gradient)] bg-clip-text text-sm text-transparent">{subtitle}</p>
@@ -114,10 +114,11 @@ function SectionTitle({ title, subtitle }: { title: string; subtitle: string }) 
   )
 }
 
-function NavLink({ href, label, active }: { href: string; label: string; active?: boolean }) {
+function NavLink({ href, label, active, onClick }: { href: string; label: string; active?: boolean; onClick?: () => void }) {
   return (
     <a
       href={href}
+      onClick={onClick}
       className={`text-sm transition ${
         active ? 'text-[var(--button)]' : 'text-[var(--text-title)]/85 hover:text-[var(--text-title)]'
       }`}
@@ -144,6 +145,7 @@ export default function Portfolio() {
   const [theme, setTheme] = useState<ThemeMode>('dark')
   const [language, setLanguage] = useState<Language>('pt')
   const [activeSection, setActiveSection] = useState('inicio')
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
@@ -270,6 +272,17 @@ export default function Portfolio() {
   }
 
   useEffect(() => {
+    const closeOnDesktop = () => {
+      if (window.innerWidth >= 768) {
+        setMobileMenuOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', closeOnDesktop)
+    return () => window.removeEventListener('resize', closeOnDesktop)
+  }, [])
+
+  useEffect(() => {
     const sections = navItems
       .map((item) => document.getElementById(item.id))
       .filter((section): section is HTMLElement => Boolean(section))
@@ -348,7 +361,13 @@ export default function Portfolio() {
             </button>
           </div>
 
-          <button type="button" className="md:hidden inline-flex h-9 w-9 items-center justify-center" aria-label="Abrir menu">
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen((prev) => !prev)}
+            className="inline-flex h-9 w-9 items-center justify-center md:hidden"
+            aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+            aria-expanded={mobileMenuOpen}
+          >
             <img
               src={isLight ? '/images/menu-mobile-light.png' : '/images/menu-mobile-dark.png'}
               alt="Menu"
@@ -356,6 +375,56 @@ export default function Portfolio() {
             />
           </button>
         </div>
+
+        {mobileMenuOpen && (
+          <div className="border-t border-[var(--line)]/80 bg-[var(--bg)]/95 px-4 py-4 md:hidden">
+            <nav className="flex flex-col gap-3">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.id}
+                  href={`#${item.id}`}
+                  label={navLabels[item.id]}
+                  active={activeSection === item.id}
+                  onClick={() => setMobileMenuOpen(false)}
+                />
+              ))}
+            </nav>
+            <div className="mt-4 flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => changeLanguage('pt')}
+                aria-label="Português"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition ${
+                  language === 'pt' ? 'border-[var(--button)] bg-[var(--button)]/20' : 'border-[var(--line)]'
+                }`}
+              >
+                <img src="/images/br.svg" alt="PT-BR" className="h-5 w-5 object-contain" />
+              </button>
+              <button
+                type="button"
+                onClick={() => changeLanguage('en')}
+                aria-label="English"
+                className={`inline-flex h-9 w-9 items-center justify-center rounded-full border transition ${
+                  language === 'en' ? 'border-[var(--button)] bg-[var(--button)]/20' : 'border-[var(--line)]'
+                }`}
+              >
+                <img src="/images/us.svg" alt="EN-US" className="h-5 w-5 object-contain" />
+              </button>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--line)]"
+                aria-label="Alternar tema"
+              >
+                <img
+                  src={isLight ? '/images/dark-icon.png' : '/images/lighticon.png'}
+                  alt="Tema"
+                  className="h-5 w-5 object-contain"
+                />
+              </button>
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="mx-auto w-full max-w-[1180px] px-4 pb-12 pt-28 sm:px-8">
@@ -380,7 +449,7 @@ export default function Portfolio() {
               className="mx-auto h-auto w-auto max-h-[200px] max-w-[200px] object-contain"
             />
 
-            <h1 className="mt-6 font-['Poppins'] text-[63px] font-bold leading-[1.02] tracking-[-0.06em] text-[var(--text-title)]">
+            <h1 className="mt-6 font-['Poppins'] text-[44px] font-bold leading-[1.02] tracking-[-0.03em] text-[var(--text-title)] sm:text-[54px] lg:text-[63px]">
               Dev-matheusFelipe
             </h1>
             <p className="mt-3 bg-[var(--subtitle-gradient)] bg-clip-text font-['Poppins'] text-[30px] font-semibold text-transparent">
@@ -467,7 +536,7 @@ export default function Portfolio() {
         </section>
 
         <section id="contact" className="mx-auto mt-24 max-w-[900px] scroll-mt-28">
-          <h2 className="text-center font-['Poppins'] text-[56px] font-bold tracking-[-0.03em] text-[var(--text-title)]">
+          <h2 className="text-center font-['Poppins'] text-[38px] font-bold tracking-[-0.03em] text-[var(--text-title)] sm:text-[56px]">
             Rizzer Studio
           </h2>
           <p className="mx-auto mt-3 max-w-[760px] text-center text-base leading-relaxed text-[var(--text-title)]/80 sm:text-lg">
@@ -504,7 +573,7 @@ export default function Portfolio() {
             style={{ top: '-3.8rem', left: '-2rem' }}
           />
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
-            <h3 className="font-['Poppins'] text-[58px] font-semibold leading-[0.95] tracking-[-0.03em] text-[var(--text-title)]">
+            <h3 className="font-['Poppins'] text-[42px] font-semibold leading-[0.95] tracking-[-0.03em] text-[var(--text-title)] sm:text-[58px]">
               {uiText.footerTitleLine1}
               <br />
               {uiText.footerTitleLine2}
@@ -512,10 +581,10 @@ export default function Portfolio() {
 
             <a
               href="mailto:matheus.f.basilio@gmail.com"
-              className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-gmail)] bg-[var(--surface)] px-5 py-3 text-[var(--text-title)]/85 hover:border-[var(--button)]"
+              className="inline-flex max-w-full items-center gap-2 rounded-xl border border-[var(--border-gmail)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-title)]/85 hover:border-[var(--button)] sm:px-5"
             >
               <img src="/images/gmail-logo.png" alt="Gmail" className="h-4 w-4 object-contain" />
-              matheus.f.basilio@gmail.com
+              <span className="break-all">matheus.f.basilio@gmail.com</span>
             </a>
           </div>
 
