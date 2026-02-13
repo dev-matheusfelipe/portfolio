@@ -157,6 +157,10 @@ Max - Width Query
 		min-width: fit-content;
 	}
 
+	.cv_cta_group{
+		flex-direction: column;
+	}
+
 	.cv_banner_bg{
 		padding: 30px 15px;
 	}
@@ -173,4 +177,3 @@ Max - Width Query
 		display: none;
 	}
 }
-

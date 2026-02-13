@@ -151,6 +151,15 @@ p {
     color: var(--cv-white-color);
 }
 
+.cv_btn_secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+}
+
+.cv_btn_secondary:hover {
+    border-color: var(--cv-primary-color);
+}
+
 .cv_btn:after{
     content: "";
     position: absolute;
@@ -433,6 +442,14 @@ section{
 
 .cv_banner_text a{
     margin: auto;
+}
+
+.cv_cta_group {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .cv_banner_service {
@@ -851,4 +868,27 @@ section{
     border-top: 10px solid #ff517e;
     right: 0;
     top: 35px;
+}
+
+.cv_link_box {
+    margin: 10px auto 0;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    padding: 15px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.cv_link_box p {
+    margin-bottom: 8px;
+}
+
+.cv_link_box code {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.25);
+    padding: 7px 10px;
+    border-radius: 6px;
+    display: inline-block;
 }

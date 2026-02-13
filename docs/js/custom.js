@@ -29,130 +29,58 @@ Project: Portfolio html
 
 		// Inner Pages Slider			
 		pages_slider: function () {
-			var swiper = new Swiper('.cv_pages_slider1', {
-				slidesPerView: 3,
-				spaceBetween: 20,
-				centeredSlides: true,
-				loop: true,
-				speed: 3000,
-				autoplay: {
-					delay: 1500,
-					disableOnInteraction: false,
-				},
-				breakpoints: {
-					1700: {
-						slidesPerView: 2.7,
-						spaceBetween: 20,
-					},
-					1199: {
-						slidesPerView: 3,
-						spaceBetween: 20,
-					},
-					992: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					768: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					575: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					},
-					320: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					}
-					,
-					0: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					}
+			['.cv_pages_slider1', '.cv_pages_slider2', '.cv_pages_slider3'].forEach(function (selector, index) {
+				if (!document.querySelector(selector)) {
+					return;
 				}
-			});
 
-			var swiper = new Swiper('.cv_pages_slider2', {
-				slidesPerView: 3,
-				spaceBetween: 20,
-				centeredSlides: true,
-				loop: true,
-				speed: 4000,
-				autoplay: {
-					delay: 2500,
-					disableOnInteraction: false,
-					reverseDirection: true,
-				},
-				breakpoints: {
-					1199: {
-						slidesPerView: 3,
-						spaceBetween: 20,
+				var options = {
+					slidesPerView: 3,
+					spaceBetween: 20,
+					centeredSlides: true,
+					loop: true,
+					speed: index === 1 ? 4000 : 3000,
+					autoplay: {
+						delay: index === 1 ? 2500 : (index === 2 ? 2000 : 1500),
+						disableOnInteraction: false,
 					},
-					992: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					768: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					575: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					},
-					320: {
-						slidesPerView: 1,
-						spaceBetween: 15,
+					breakpoints: {
+						1700: {
+							slidesPerView: 2.7,
+							spaceBetween: 20,
+						},
+						1199: {
+							slidesPerView: 3,
+							spaceBetween: 20,
+						},
+						992: {
+							slidesPerView: 2,
+							spaceBetween: 20,
+						},
+						768: {
+							slidesPerView: 2,
+							spaceBetween: 20,
+						},
+						575: {
+							slidesPerView: 1,
+							spaceBetween: 15,
+						},
+						320: {
+							slidesPerView: 1,
+							spaceBetween: 15,
+						},
+						0: {
+							slidesPerView: 1,
+							spaceBetween: 15,
+						}
 					}
-					,
-					0: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					}
-				}
-			});
+				};
 
-			var swiper = new Swiper('.cv_pages_slider3', {
-				slidesPerView: 3,
-				spaceBetween: 20,
-				centeredSlides: true,
-				loop: true,
-				speed: 3000,
-				autoplay: {
-					delay: 2000,
-					disableOnInteraction: false,
-				},
-				breakpoints: {
-					1700: {
-						slidesPerView: 2.7,
-						spaceBetween: 20,
-					},
-					1199: {
-						slidesPerView: 3,
-						spaceBetween: 20,
-					},
-					992: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					768: {
-						slidesPerView: 2,
-						spaceBetween: 20,
-					},
-					575: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					},
-					320: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					}
-					,
-					0: {
-						slidesPerView: 1,
-						spaceBetween: 15,
-					}
+				if (index === 1) {
+					options.autoplay.reverseDirection = true;
 				}
+
+				new Swiper(selector, options);
 			});
 		},
 
@@ -192,6 +120,9 @@ Project: Portfolio html
 				$('body').toggleClass('menu-open');
 			})
 			let mouseCursor = document.querySelector(".cv_close");
+			if (!mouseCursor) {
+				return;
+			}
 			window.addEventListener('mousemove', cv_close);
 			function cv_close (e) {
 				mouseCursor.style.top = e.pageY + 'px';
@@ -205,4 +136,3 @@ Project: Portfolio html
 	NightClub.init();
 
 }(jQuery));
-
