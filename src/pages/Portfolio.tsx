@@ -197,6 +197,7 @@ export default function Portfolio() {
     github: 0,
     linkedin: 0
   })
+  const [refreshTick, setRefreshTick] = useState(0)
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
@@ -409,6 +410,16 @@ export default function Portfolio() {
   }, [])
 
   useEffect(() => {
+    const timer = window.setInterval(() => {
+      setRefreshTick((v) => v + 1)
+    }, 30000)
+
+    return () => {
+      window.clearInterval(timer)
+    }
+  }, [])
+
+  useEffect(() => {
     let cancelled = false
 
     const normalizeDomain = (value: string) => {
@@ -531,7 +542,7 @@ export default function Portfolio() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [refreshTick])
 
   useEffect(() => {
     let cancelled = false
@@ -615,7 +626,7 @@ export default function Portfolio() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [refreshTick])
 
   useEffect(() => {
     const unsubscribePortfolio = portfolioMotionValue.on('change', (latest) => {
@@ -652,12 +663,21 @@ export default function Portfolio() {
     }
   }, [portfolioMotionValue, studioMotionValue, combinedMotionValue, githubMotionValue, linkedinMotionValue])
 
+  const combinedAllTotal =
+    (visitStats.combined.totalCount ?? 0) +
+    (socialStats.githubFollowers ?? 0) +
+    (socialStats.linkedinFollowers ?? 0)
+  const combinedAllToday =
+    (visitStats.combined.todayCount ?? 0) +
+    (socialStats.githubToday ?? 0) +
+    (socialStats.linkedinToday ?? 0)
+
   useEffect(() => {
     if (visitStats.isLoading) return
 
     const portfolioTarget = visitStats.portfolio.totalCount ?? 0
     const studioTarget = visitStats.rizzerStudio.totalCount ?? 0
-    const combinedTarget = visitStats.combined.totalCount ?? 0
+    const combinedTarget = combinedAllTotal
 
     const portfolioControls = animate(portfolioMotionValue, portfolioTarget, {
       type: 'spring',
@@ -689,7 +709,7 @@ export default function Portfolio() {
     visitStats.isLoading,
     visitStats.portfolio.totalCount,
     visitStats.rizzerStudio.totalCount,
-    visitStats.combined.totalCount,
+    combinedAllTotal,
     portfolioMotionValue,
     studioMotionValue,
     combinedMotionValue
@@ -1194,17 +1214,22 @@ export default function Portfolio() {
                   <div className={statsCardLineClass} />
                   <p className={statsLabelClass}>{uiText.rizzerStatsCombined}</p>
                   <motion.span
-                    key={`combined-${visitStats.combined.totalCount ?? 'na'}-${visitStats.isLoading}-${visitStats.hasError}-${visitStats.isPartial}`}
+                    key={`combined-${combinedAllTotal}-${visitStats.isLoading}-${socialStats.isLoading}`}
                     initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
                     animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                     transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1], delay: 0.09 }}
                     className={statsNumberClass}
                   >
-                    {formatVisitCount(visitStats.combined.totalCount, displayVisitCounts.combined)}
+                    {visitStats.isLoading || socialStats.isLoading
+                      ? uiText.rizzerStatsLoading
+                      : numberFormatter.format(displayVisitCounts.combined)}
                   </motion.span>
                   <p className={statsHintClass}>{uiText.rizzerStatsCombinedHint}</p>
                   <p className={statsTodayClass}>
-                    {uiText.rizzerStatsTodayLabel}: {formatRawCount(visitStats.combined.todayCount)}
+                    {uiText.rizzerStatsTodayLabel}:{' '}
+                    {visitStats.isLoading || socialStats.isLoading
+                      ? uiText.rizzerStatsLoading
+                      : numberFormatter.format(combinedAllToday)}
                   </p>
                 </motion.article>
               </div>
