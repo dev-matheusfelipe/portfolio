@@ -1,9 +1,32 @@
 ﻿import { useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+import { animate, motion, useMotionValue } from 'framer-motion'
 import { portfolioLinks } from '../data/portfolio'
 
 type ThemeMode = 'dark' | 'light'
 type Language = 'pt' | 'en'
+type VisitMetric = {
+  totalCount: number | null
+  todayCount: number | null
+  dashboardUrl: string | null
+}
+type VisitStats = {
+  portfolio: VisitMetric
+  rizzerStudio: VisitMetric
+  combined: VisitMetric
+  isLoading: boolean
+  hasError: boolean
+  isPartial: boolean
+}
+type SocialStats = {
+  githubFollowers: number | null
+  linkedinFollowers: number | null
+  githubToday: number | null
+  linkedinToday: number | null
+  isLoading: boolean
+}
+
+const RIZZER_STUDIO_DOMAINS = ['rizzer-studio-site.vercel.app', 'rizzer-studio.vercel.app'] as const
 
 const navItems = [
   { id: 'inicio' },
@@ -146,6 +169,34 @@ export default function Portfolio() {
   const [language, setLanguage] = useState<Language>('pt')
   const [activeSection, setActiveSection] = useState('inicio')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const emptyMetric: VisitMetric = { totalCount: null, todayCount: null, dashboardUrl: null }
+  const [visitStats, setVisitStats] = useState<VisitStats>({
+    portfolio: emptyMetric,
+    rizzerStudio: emptyMetric,
+    combined: emptyMetric,
+    isLoading: true,
+    hasError: false,
+    isPartial: false
+  })
+  const portfolioMotionValue = useMotionValue(0)
+  const studioMotionValue = useMotionValue(0)
+  const combinedMotionValue = useMotionValue(0)
+  const githubMotionValue = useMotionValue(0)
+  const linkedinMotionValue = useMotionValue(0)
+  const [socialStats, setSocialStats] = useState<SocialStats>({
+    githubFollowers: null,
+    linkedinFollowers: null,
+    githubToday: null,
+    linkedinToday: null,
+    isLoading: true
+  })
+  const [displayVisitCounts, setDisplayVisitCounts] = useState({
+    portfolio: 0,
+    studio: 0,
+    combined: 0,
+    github: 0,
+    linkedin: 0
+  })
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
@@ -167,6 +218,7 @@ export default function Portfolio() {
   const themeVars = useMemo(() => themes[theme], [theme])
   const isLight = theme === 'light'
   const serviceCards = useMemo(() => serviceCardsByLanguage[language], [language])
+  const numberFormatter = useMemo(() => new Intl.NumberFormat(language === 'pt' ? 'pt-BR' : 'en-US'), [language])
   const navLabels = useMemo(
     () =>
       language === 'pt'
@@ -222,6 +274,29 @@ export default function Portfolio() {
             rizzerExperimentText: 'Prototipação rápida para validar conceito, UX e arquitetura.',
             rizzerOpen: 'Abrir Rizzer Studio',
             rizzerLab: 'Ver Lab',
+            rizzerStatsTitle: 'Estatísticas de visitas',
+            rizzerStatsSubtitle: 'Acompanhamento automático de acessos do site.',
+            rizzerStatsPanelTag: 'Painel ao vivo',
+            rizzerStatsPortfolio: 'Portfolio',
+            rizzerStatsPortfolioHint: 'Visitas deste portfolio.',
+            rizzerStatsStudio: 'Rizzer Studio',
+            rizzerStatsStudioHint: 'Visitas do Rizzer Studio.',
+            rizzerStatsGithub: 'GitHub',
+            rizzerStatsGithubHint: 'Visitas do GitHub.',
+            rizzerStatsLinkedin: 'LinkedIn',
+            rizzerStatsLinkedinHint: 'Visitas do LinkedIn.',
+            rizzerStatsCombined: 'Total combinado',
+            rizzerStatsCombinedHint: 'Portfolio + Rizzer Studio + Github + LinkedIn.',
+            rizzerStatsTodayLabel: 'Hoje',
+            rizzerStatsStatus: 'Status da coleta',
+            rizzerStatsStatusHint: 'Integrado com coleta automática de tráfego.',
+            rizzerStatsLive: 'Ativo',
+            rizzerStatsPartial: 'Parcial',
+            rizzerStatsLoading: 'Carregando...',
+            rizzerStatsUnavailable: 'Indisponível',
+            rizzerStatsError: 'Sem conexão',
+            rizzerStatsPortfolioDashboard: 'Dashboard Portfolio',
+            rizzerStatsStudioDashboard: 'Dashboard Rizzer',
             footerTitleLine1: 'Vamos',
             footerTitleLine2: 'trabalhar juntos',
             footerRights: `© ${currentYear} Dev-MatheusFelipe. Todos os direitos reservados.`
@@ -259,6 +334,29 @@ export default function Portfolio() {
             rizzerExperimentText: 'Rapid prototyping to validate concept, UX and architecture.',
             rizzerOpen: 'Open Rizzer Studio',
             rizzerLab: 'View Lab',
+            rizzerStatsTitle: 'Visit statistics',
+            rizzerStatsSubtitle: 'Automatic tracking for website visits.',
+            rizzerStatsPanelTag: 'Live panel',
+            rizzerStatsPortfolio: 'Portfolio',
+            rizzerStatsPortfolioHint: 'Visits from this portfolio.',
+            rizzerStatsStudio: 'Rizzer Studio',
+            rizzerStatsStudioHint: 'Visits from Rizzer Studio.',
+            rizzerStatsGithub: 'GitHub',
+            rizzerStatsGithubHint: 'GitHub visits.',
+            rizzerStatsLinkedin: 'LinkedIn',
+            rizzerStatsLinkedinHint: 'LinkedIn visits.',
+            rizzerStatsCombined: 'Combined total',
+            rizzerStatsCombinedHint: 'Portfolio + Rizzer Studio + Github + LinkedIn.',
+            rizzerStatsTodayLabel: 'Today',
+            rizzerStatsStatus: 'Collection status',
+            rizzerStatsStatusHint: 'Connected to automatic traffic tracking.',
+            rizzerStatsLive: 'Live',
+            rizzerStatsPartial: 'Partial',
+            rizzerStatsLoading: 'Loading...',
+            rizzerStatsUnavailable: 'Unavailable',
+            rizzerStatsError: 'No connection',
+            rizzerStatsPortfolioDashboard: 'Portfolio dashboard',
+            rizzerStatsStudioDashboard: 'Rizzer dashboard',
             footerTitleLine1: "Let's",
             footerTitleLine2: 'work together',
             footerRights: `© ${currentYear} Dev-MatheusFelipe. All rights reserved.`
@@ -309,6 +407,393 @@ export default function Portfolio() {
     sections.forEach((section) => observer.observe(section))
     return () => observer.disconnect()
   }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const normalizeDomain = (value: string) => {
+      const trimmed = value.trim()
+      if (!trimmed) return ''
+      try {
+        return new URL(trimmed).hostname
+      } catch {
+        return trimmed.replace(/^https?:\/\//, '').split('/')[0]
+      }
+    }
+
+    const sumCounts = (values: Array<number | null>) => {
+      const valid = values.filter((value): value is number => typeof value === 'number')
+      if (!valid.length) return null
+      return valid.reduce((acc, value) => acc + value, 0)
+    }
+
+    const toMetric = (payload: { totalCount?: number; todayCount?: number; dashboardUrl?: string }): VisitMetric => ({
+      totalCount: typeof payload.totalCount === 'number' ? payload.totalCount : null,
+      todayCount: typeof payload.todayCount === 'number' ? payload.todayCount : null,
+      dashboardUrl: typeof payload.dashboardUrl === 'string' ? payload.dashboardUrl : null
+    })
+
+    const loadVisitStats = async () => {
+      const env = import.meta.env as Record<string, string | undefined>
+      const endpoint = env.VITE_VISITOR_COUNTER_API_URL?.trim() || 'https://visitor.6developer.com/visit'
+      let failedRequests = 0
+
+      const requestMetric = async (domain: string): Promise<VisitMetric> => {
+        const response = await fetch(`${endpoint}?domain=${encodeURIComponent(domain)}`)
+        if (!response.ok) {
+          throw new Error(`Visit stats request failed: ${response.status}`)
+        }
+        const data = (await response.json()) as { totalCount?: number; todayCount?: number; dashboardUrl?: string }
+        return toMetric(data)
+      }
+
+      const safeRequest = async (runner: () => Promise<VisitMetric>) => {
+        try {
+          return await runner()
+        } catch {
+          failedRequests += 1
+          return null
+        }
+      }
+
+      const envDomain = env.VITE_VISITOR_COUNTER_DOMAIN?.trim()
+      const envCompareDomain = env.VITE_VISITOR_COUNTER_COMPARE_DOMAIN?.trim()
+      const portfolioDomainRaw = envDomain && envDomain.length > 0 ? envDomain : window.location.hostname
+      const portfolioDomain = normalizeDomain(portfolioDomainRaw) || window.location.hostname
+      const studioDomains = [
+        envCompareDomain ?? '',
+        ...RIZZER_STUDIO_DOMAINS
+      ]
+        .map((domain) => normalizeDomain(domain))
+        .filter((domain, index, arr) => domain.length > 0 && arr.indexOf(domain) === index)
+      const dayKey = new Date().toISOString().slice(0, 10)
+      const guardKey = `portfolio-visit-posted:${portfolioDomain}:${window.location.pathname}:${dayKey}`
+      const alreadyCounted = window.sessionStorage.getItem(guardKey) === '1'
+
+      const portfolioMetric = await safeRequest(async () => {
+        const response = alreadyCounted
+          ? await fetch(`${endpoint}?domain=${encodeURIComponent(portfolioDomain)}`)
+          : await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                domain: portfolioDomain,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                page_path: window.location.pathname,
+                page_title: document.title,
+                referrer: document.referrer || ''
+              })
+            })
+
+        if (!response.ok) {
+          throw new Error(`Visit stats request failed: ${response.status}`)
+        }
+
+        if (!alreadyCounted) {
+          window.sessionStorage.setItem(guardKey, '1')
+        }
+
+        const data = (await response.json()) as { totalCount?: number; todayCount?: number; dashboardUrl?: string }
+        return toMetric(data)
+      })
+
+      const studioMetricsRaw = await Promise.all(studioDomains.map((domain) => safeRequest(() => requestMetric(domain))))
+      const studioMetrics = studioMetricsRaw.filter((item): item is VisitMetric => item !== null)
+
+      const rizzerStudioMetric: VisitMetric = {
+        totalCount: sumCounts(studioMetrics.map((item) => item.totalCount)),
+        todayCount: sumCounts(studioMetrics.map((item) => item.todayCount)),
+        dashboardUrl: studioMetrics.find((item) => item.dashboardUrl)?.dashboardUrl ?? null
+      }
+
+      const combinedMetric: VisitMetric = {
+        totalCount: sumCounts([portfolioMetric?.totalCount ?? null, rizzerStudioMetric.totalCount]),
+        todayCount: sumCounts([portfolioMetric?.todayCount ?? null, rizzerStudioMetric.todayCount]),
+        dashboardUrl: null
+      }
+
+      if (cancelled) return
+
+      const hasAnyData = portfolioMetric !== null || studioMetrics.length > 0
+      setVisitStats({
+        portfolio: portfolioMetric ?? { ...emptyMetric },
+        rizzerStudio: rizzerStudioMetric,
+        combined: combinedMetric,
+        isLoading: false,
+        hasError: !hasAnyData,
+        isPartial: failedRequests > 0 && hasAnyData
+      })
+    }
+
+    loadVisitStats()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
+    const loadSocialStats = async () => {
+      let githubFollowers: number | null = null
+      let linkedinFollowers: number | null = null
+      let githubToday: number | null = null
+      let linkedinToday: number | null = null
+
+      try {
+        const response = await fetch('/api/social-stats')
+        if (response.ok) {
+          const data = (await response.json()) as { githubFollowers?: number; linkedinFollowers?: number }
+          githubFollowers = typeof data.githubFollowers === 'number' ? data.githubFollowers : null
+          linkedinFollowers = typeof data.linkedinFollowers === 'number' ? data.linkedinFollowers : null
+        }
+      } catch {
+        // fallback below
+      }
+
+      const env = import.meta.env as Record<string, string | undefined>
+      const endpoint = env.VITE_VISITOR_COUNTER_API_URL?.trim() || 'https://visitor.6developer.com/visit'
+      const githubCounterDomain =
+        env.VITE_VISITOR_COUNTER_GITHUB_DOMAIN?.trim() || 'github.com/dev-matheusfelipe'
+      const linkedinCounterDomain =
+        env.VITE_VISITOR_COUNTER_LINKEDIN_DOMAIN?.trim() || 'linkedin.com/in/dev-matheusfelipe'
+
+      const requestToday = async (domain: string) => {
+        try {
+          const response = await fetch(`${endpoint}?domain=${encodeURIComponent(domain)}`)
+          if (!response.ok) return null
+          const data = (await response.json()) as { todayCount?: number }
+          return typeof data.todayCount === 'number' && Number.isFinite(data.todayCount)
+            ? data.todayCount
+            : null
+        } catch {
+          return null
+        }
+      }
+
+      githubToday = await requestToday(githubCounterDomain)
+      linkedinToday = await requestToday(linkedinCounterDomain)
+
+      if (githubFollowers === null) {
+        try {
+          const response = await fetch('https://api.github.com/users/dev-matheusfelipe', {
+            headers: {
+              Accept: 'application/vnd.github+json'
+            }
+          })
+          if (response.ok) {
+            const data = (await response.json()) as { followers?: number }
+            githubFollowers = typeof data.followers === 'number' ? data.followers : null
+          }
+        } catch {
+          githubFollowers = null
+        }
+      }
+
+      if (linkedinFollowers === null) {
+        const linkedinRaw = env.VITE_LINKEDIN_FOLLOWERS?.trim()
+        if (linkedinRaw) {
+          const parsed = Number(linkedinRaw)
+          linkedinFollowers = Number.isFinite(parsed) ? parsed : null
+        }
+      }
+
+      if (cancelled) return
+
+      setSocialStats({
+        githubFollowers: githubFollowers ?? 0,
+        linkedinFollowers: linkedinFollowers ?? 0,
+        githubToday: githubToday ?? 0,
+        linkedinToday: linkedinToday ?? 0,
+        isLoading: false
+      })
+    }
+
+    loadSocialStats()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    const unsubscribePortfolio = portfolioMotionValue.on('change', (latest) => {
+      const nextValue = Math.round(latest)
+      setDisplayVisitCounts((current) => (current.portfolio === nextValue ? current : { ...current, portfolio: nextValue }))
+    })
+
+    const unsubscribeStudio = studioMotionValue.on('change', (latest) => {
+      const nextValue = Math.round(latest)
+      setDisplayVisitCounts((current) => (current.studio === nextValue ? current : { ...current, studio: nextValue }))
+    })
+
+    const unsubscribeCombined = combinedMotionValue.on('change', (latest) => {
+      const nextValue = Math.round(latest)
+      setDisplayVisitCounts((current) => (current.combined === nextValue ? current : { ...current, combined: nextValue }))
+    })
+
+    const unsubscribeGithub = githubMotionValue.on('change', (latest) => {
+      const nextValue = Math.round(latest)
+      setDisplayVisitCounts((current) => (current.github === nextValue ? current : { ...current, github: nextValue }))
+    })
+
+    const unsubscribeLinkedin = linkedinMotionValue.on('change', (latest) => {
+      const nextValue = Math.round(latest)
+      setDisplayVisitCounts((current) => (current.linkedin === nextValue ? current : { ...current, linkedin: nextValue }))
+    })
+
+    return () => {
+      unsubscribePortfolio()
+      unsubscribeStudio()
+      unsubscribeCombined()
+      unsubscribeGithub()
+      unsubscribeLinkedin()
+    }
+  }, [portfolioMotionValue, studioMotionValue, combinedMotionValue, githubMotionValue, linkedinMotionValue])
+
+  useEffect(() => {
+    if (visitStats.isLoading) return
+
+    const portfolioTarget = visitStats.portfolio.totalCount ?? 0
+    const studioTarget = visitStats.rizzerStudio.totalCount ?? 0
+    const combinedTarget = visitStats.combined.totalCount ?? 0
+
+    const portfolioControls = animate(portfolioMotionValue, portfolioTarget, {
+      type: 'spring',
+      stiffness: 115,
+      damping: 22,
+      mass: 0.75
+    })
+    const studioControls = animate(studioMotionValue, studioTarget, {
+      type: 'spring',
+      stiffness: 122,
+      damping: 23,
+      mass: 0.74,
+      delay: 0.04
+    })
+    const combinedControls = animate(combinedMotionValue, combinedTarget, {
+      type: 'spring',
+      stiffness: 130,
+      damping: 24,
+      mass: 0.72,
+      delay: 0.08
+    })
+
+    return () => {
+      portfolioControls.stop()
+      studioControls.stop()
+      combinedControls.stop()
+    }
+  }, [
+    visitStats.isLoading,
+    visitStats.portfolio.totalCount,
+    visitStats.rizzerStudio.totalCount,
+    visitStats.combined.totalCount,
+    portfolioMotionValue,
+    studioMotionValue,
+    combinedMotionValue
+  ])
+
+  useEffect(() => {
+    if (socialStats.isLoading) return
+
+    const githubControls = animate(githubMotionValue, socialStats.githubFollowers ?? 0, {
+      type: 'spring',
+      stiffness: 122,
+      damping: 23,
+      mass: 0.74
+    })
+    const linkedinControls = animate(linkedinMotionValue, socialStats.linkedinFollowers ?? 0, {
+      type: 'spring',
+      stiffness: 122,
+      damping: 23,
+      mass: 0.74,
+      delay: 0.04
+    })
+
+    return () => {
+      githubControls.stop()
+      linkedinControls.stop()
+    }
+  }, [socialStats.isLoading, socialStats.githubFollowers, socialStats.linkedinFollowers, githubMotionValue, linkedinMotionValue])
+
+  const formatVisitCount = (value: number | null, animatedValue: number) => {
+    if (visitStats.isLoading) return uiText.rizzerStatsLoading
+    if (value === null) return uiText.rizzerStatsUnavailable
+    return numberFormatter.format(animatedValue)
+  }
+
+  const formatRawCount = (value: number | null) => {
+    if (value === null) return uiText.rizzerStatsUnavailable
+    return numberFormatter.format(value)
+  }
+
+  const formatSocialCount = (value: number | null, animatedValue: number) => {
+    if (socialStats.isLoading) return uiText.rizzerStatsLoading
+    return numberFormatter.format(animatedValue)
+  }
+
+  const visitStatusLabel = visitStats.isLoading
+    ? uiText.rizzerStatsLoading
+    : visitStats.hasError
+      ? uiText.rizzerStatsError
+      : visitStats.isPartial
+        ? uiText.rizzerStatsPartial
+        : uiText.rizzerStatsLive
+
+  const visitStatusTone = visitStats.isLoading
+    ? isLight
+      ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.35)]'
+      : 'bg-amber-300 shadow-[0_0_12px_rgba(252,211,77,0.75)]'
+    : visitStats.hasError
+      ? isLight
+        ? 'bg-rose-500 shadow-[0_0_8px_rgba(225,29,72,0.35)]'
+        : 'bg-rose-400 shadow-[0_0_12px_rgba(251,113,133,0.75)]'
+      : visitStats.isPartial
+        ? isLight
+          ? 'bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.35)]'
+          : 'bg-orange-300 shadow-[0_0_12px_rgba(253,186,116,0.85)]'
+        : isLight
+          ? 'bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.35)]'
+          : 'bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.9)]'
+
+  const statsPanelClass = 'relative mt-6 p-0'
+  const statsGridOverlayClass = 'hidden'
+  const statsBeamClass = 'hidden'
+  const statsLineClass = 'hidden'
+
+  const statsTitleClass = isLight
+    ? "font-['Poppins'] text-lg font-semibold tracking-[-0.01em] text-[#24435a] sm:text-xl"
+    : "font-['Poppins'] text-lg font-semibold tracking-[-0.01em] text-slate-100 sm:text-xl"
+
+  const statsTagClass = isLight
+    ? 'inline-flex items-center rounded-full border border-sky-500/40 bg-sky-500/10 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-[#1d5d86]'
+    : 'inline-flex items-center rounded-full border border-cyan-200/35 bg-cyan-300/10 px-3 py-1 text-[11px] uppercase tracking-[0.16em] text-cyan-100'
+
+  const statsSubtitleClass = isLight ? 'mt-1 text-sm text-[#3f627c]/88' : 'mt-1 text-sm text-slate-300/78'
+
+  const statsCardClass =
+    'group relative overflow-hidden rounded-xl border border-[var(--line)] bg-[var(--surface-soft)] p-4 transition-transform sm:p-5'
+
+  const statsCardLineClass = isLight
+    ? 'pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sky-500/55 to-transparent opacity-80'
+    : 'pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/70 to-transparent opacity-60'
+
+  const statsLabelClass = isLight
+    ? 'text-[11px] uppercase tracking-[0.16em] text-[#2f607f]/85'
+    : 'text-[11px] uppercase tracking-[0.16em] text-cyan-100/72'
+
+  const statsNumberClass = isLight
+    ? "mt-3 block font-['Poppins'] text-[38px] font-semibold leading-none tracking-[-0.045em] text-[#1f4660] tabular-nums"
+    : "mt-3 block font-['Poppins'] text-[38px] font-semibold leading-none tracking-[-0.045em] text-cyan-100 tabular-nums"
+
+  const statsHintClass = isLight ? 'mt-2 text-xs text-[#40637b]/86' : 'mt-2 text-xs text-slate-300/66'
+  const statsTodayClass = isLight ? 'mt-1 text-xs text-[#40637b]/86' : 'mt-1 text-xs text-slate-300/66'
+  const statsStatusWrapClass =
+    'inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-soft)] px-3 py-1.5'
+  const statsStatusTextClass = isLight ? "font-['Poppins'] text-sm font-semibold text-[#1f4660]" : "font-['Poppins'] text-sm font-semibold text-slate-100"
+  const statsLinkClass = 'inline-flex items-center text-sm font-medium text-[var(--button)] transition hover:opacity-80'
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text-title)]" style={themeVars}>
@@ -562,6 +1047,214 @@ export default function Portfolio() {
             <PanelButton href={portfolioLinks.rizzerStudio}>{uiText.rizzerOpen}</PanelButton>
             <PanelButton href={portfolioLinks.lab}>{uiText.rizzerLab}</PanelButton>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.45 }}
+            className={statsPanelClass}
+          >
+            <div className={statsGridOverlayClass} />
+            <motion.div
+              animate={{ opacity: [0.2, 0.45, 0.2] }}
+              transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+              className={statsBeamClass}
+            />
+            <div className={statsLineClass} />
+
+            <div className="relative">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className={statsTitleClass}>
+                  {uiText.rizzerStatsTitle}
+                </h3>
+                <span className={statsTagClass}>
+                  {uiText.rizzerStatsPanelTag}
+                </span>
+              </div>
+              <p className={statsSubtitleClass}>{uiText.rizzerStatsSubtitle}</p>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <motion.article
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.05, duration: 0.32 }}
+                  whileHover={{ y: -4, scale: 1.008 }}
+                  className={statsCardClass}
+                >
+                  <div className={statsCardLineClass} />
+                  <p className={statsLabelClass}>{uiText.rizzerStatsPortfolio}</p>
+                  <motion.span
+                    key={`portfolio-${visitStats.portfolio.totalCount ?? 'na'}-${visitStats.isLoading}-${visitStats.hasError}-${visitStats.isPartial}`}
+                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1] }}
+                    className={statsNumberClass}
+                  >
+                    {formatVisitCount(visitStats.portfolio.totalCount, displayVisitCounts.portfolio)}
+                  </motion.span>
+                  <p className={statsHintClass}>{uiText.rizzerStatsPortfolioHint}</p>
+                  <p className={statsTodayClass}>
+                    {uiText.rizzerStatsTodayLabel}: {formatRawCount(visitStats.portfolio.todayCount)}
+                  </p>
+                </motion.article>
+
+                <motion.article
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.14, duration: 0.32 }}
+                  whileHover={{ y: -4, scale: 1.008 }}
+                  className={statsCardClass}
+                >
+                  <div className={statsCardLineClass} />
+                  <p className={statsLabelClass}>{uiText.rizzerStatsStudio}</p>
+                  <motion.span
+                    key={`studio-${visitStats.rizzerStudio.totalCount ?? 'na'}-${visitStats.isLoading}-${visitStats.hasError}-${visitStats.isPartial}`}
+                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
+                    className={statsNumberClass}
+                  >
+                    {formatVisitCount(visitStats.rizzerStudio.totalCount, displayVisitCounts.studio)}
+                  </motion.span>
+                  <p className={statsHintClass}>{uiText.rizzerStatsStudioHint}</p>
+                  <p className={statsTodayClass}>
+                    {uiText.rizzerStatsTodayLabel}: {formatRawCount(visitStats.rizzerStudio.todayCount)}
+                  </p>
+                </motion.article>
+
+                <motion.article
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.22, duration: 0.32 }}
+                  whileHover={{ y: -4, scale: 1.008 }}
+                  className={statsCardClass}
+                >
+                  <div className={statsCardLineClass} />
+                  <p className={statsLabelClass}>{uiText.rizzerStatsGithub}</p>
+                  <motion.span
+                    key={`github-${socialStats.githubFollowers ?? 'na'}-${socialStats.isLoading}`}
+                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1], delay: 0.09 }}
+                    className={statsNumberClass}
+                  >
+                    {formatSocialCount(socialStats.githubFollowers, displayVisitCounts.github)}
+                  </motion.span>
+                  <p className={statsHintClass}>{uiText.rizzerStatsGithubHint}</p>
+                  <p className={statsTodayClass}>
+                    {uiText.rizzerStatsTodayLabel}:{' '}
+                    {socialStats.isLoading
+                      ? uiText.rizzerStatsLoading
+                      : formatRawCount(socialStats.githubToday)}
+                  </p>
+                </motion.article>
+
+                <motion.article
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.3, duration: 0.32 }}
+                  whileHover={{ y: -4, scale: 1.008 }}
+                  className={statsCardClass}
+                >
+                  <div className={statsCardLineClass} />
+                  <p className={statsLabelClass}>{uiText.rizzerStatsLinkedin}</p>
+                  <motion.span
+                    key={`linkedin-${socialStats.linkedinFollowers ?? 'na'}-${socialStats.isLoading}`}
+                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1], delay: 0.12 }}
+                    className={statsNumberClass}
+                  >
+                    {formatSocialCount(socialStats.linkedinFollowers, displayVisitCounts.linkedin)}
+                  </motion.span>
+                  <p className={statsHintClass}>{uiText.rizzerStatsLinkedinHint}</p>
+                  <p className={statsTodayClass}>
+                    {uiText.rizzerStatsTodayLabel}:{' '}
+                    {socialStats.isLoading
+                      ? uiText.rizzerStatsLoading
+                      : formatRawCount(socialStats.linkedinToday)}
+                  </p>
+                </motion.article>
+              </div>
+
+              <div className="mt-4 grid gap-4">
+                <motion.article
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ delay: 0.22, duration: 0.32 }}
+                  whileHover={{ y: -4, scale: 1.004 }}
+                  className={statsCardClass}
+                >
+                  <div className={statsCardLineClass} />
+                  <p className={statsLabelClass}>{uiText.rizzerStatsCombined}</p>
+                  <motion.span
+                    key={`combined-${visitStats.combined.totalCount ?? 'na'}-${visitStats.isLoading}-${visitStats.hasError}-${visitStats.isPartial}`}
+                    initial={{ opacity: 0, y: 14, filter: 'blur(4px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.36, ease: [0.16, 1, 0.3, 1], delay: 0.09 }}
+                    className={statsNumberClass}
+                  >
+                    {formatVisitCount(visitStats.combined.totalCount, displayVisitCounts.combined)}
+                  </motion.span>
+                  <p className={statsHintClass}>{uiText.rizzerStatsCombinedHint}</p>
+                  <p className={statsTodayClass}>
+                    {uiText.rizzerStatsTodayLabel}: {formatRawCount(visitStats.combined.todayCount)}
+                  </p>
+                </motion.article>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 pt-3">
+                <div className={statsStatusWrapClass}>
+                  <span className={`h-2 w-2 rounded-full ${visitStatusTone} ${visitStats.hasError ? '' : 'animate-pulse'}`} />
+                  <span className={statsStatusTextClass}>{visitStatusLabel}</span>
+                </div>
+                <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
+                  {visitStats.portfolio.dashboardUrl && (
+                    <a
+                      href={visitStats.portfolio.dashboardUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={statsLinkClass}
+                    >
+                      {uiText.rizzerStatsPortfolioDashboard}
+                    </a>
+                  )}
+                  {visitStats.rizzerStudio.dashboardUrl && (
+                    <a
+                      href={visitStats.rizzerStudio.dashboardUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={statsLinkClass}
+                    >
+                      {uiText.rizzerStatsStudioDashboard}
+                    </a>
+                  )}
+                  <a
+                    href="https://github.com/dev-matheusfelipe"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={statsLinkClass}
+                  >
+                    GitHub
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/dev-matheusfelipe/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={statsLinkClass}
+                  >
+                    LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </section>
 
         <footer className="relative mt-24 pt-10">
