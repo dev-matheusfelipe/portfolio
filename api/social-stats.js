@@ -24,11 +24,32 @@ export default async function handler(req, res) {
 
   const linkedinRaw = process.env.LINKEDIN_FOLLOWERS
   const linkedinParsed = Number(linkedinRaw)
-  const linkedinFollowers = Number.isFinite(linkedinParsed) ? linkedinParsed : 0
+  const envLinkedinFollowers = Number.isFinite(linkedinParsed) ? linkedinParsed : null
+
+  let linkedinFollowers = envLinkedinFollowers ?? 0
+  if (envLinkedinFollowers === null) {
+    try {
+      const endpoint = process.env.VISITOR_COUNTER_API_URL || 'https://visitor.6developer.com/visit'
+      const linkedinDomain =
+        process.env.VISITOR_COUNTER_LINKEDIN_DOMAIN || 'linkedin.com/in/dev-matheusfelipe'
+      const response = await fetch(`${endpoint}?domain=${encodeURIComponent(linkedinDomain)}`)
+      if (response.ok) {
+        const data = await response.json()
+        linkedinFollowers =
+          typeof data.totalCount === 'number' && Number.isFinite(data.totalCount) ? data.totalCount : 0
+      }
+    } catch {
+      linkedinFollowers = 0
+    }
+  }
 
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600')
   return res.status(200).json({
     githubFollowers,
-    linkedinFollowers
+    linkedinFollowers,
+    source: {
+      github: 'api.github.com',
+      linkedin: envLinkedinFollowers === null ? 'visitor_counter_or_default' : 'env'
+    }
   })
 }
