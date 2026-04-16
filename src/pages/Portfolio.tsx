@@ -2,14 +2,18 @@
 import type { ReactNode } from 'react'
 import { animate, motion, useMotionValue } from 'framer-motion'
 import { portfolioLinks } from '../data/portfolio'
+import {
+  emptyMetric,
+  mergeMetricWithFallback,
+  readCachedMetric,
+  sumCounts,
+  toMetric,
+  writeCachedMetric,
+  type VisitMetric
+} from '../lib/visitStats'
 
 type ThemeMode = 'dark' | 'light'
 type Language = 'pt' | 'en'
-type VisitMetric = {
-  totalCount: number | null
-  todayCount: number | null
-  dashboardUrl: string | null
-}
 type VisitStats = {
   portfolio: VisitMetric
   rizzerStudio: VisitMetric
@@ -164,12 +168,38 @@ function PanelButton({ children, href }: { children: ReactNode; href?: string })
   return <button className={className}>{children}</button>
 }
 
+function SocialLogoLinks() {
+  const profiles = [
+    { label: 'GitHub', text: '@Dev.matheusFelipe', href: portfolioLinks.github, image: '/images/logo_github.png' },
+    { label: 'Discord', text: '@Dev.matheusFelipe', href: 'https://discord.com/users/dev.matheusfelipe', image: '/images/logo_discord.png' },
+    { label: 'LinkedIn', text: 'Matheus Felipe', href: portfolioLinks.linkedin, image: '/images/logo_linkdin.png' },
+    { label: 'Instagram', text: 'M.f_MatheusFelipe', href: portfolioLinks.instagram, image: '/images/logo_instagram.png' }
+  ]
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      {profiles.map((profile) => (
+        <a
+          key={profile.label}
+          href={profile.href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-soft)] px-4 py-2 text-sm font-semibold text-[var(--text-title)] transition hover:border-[var(--button)] hover:bg-[var(--button)]/10"
+          aria-label={`${profile.label} ${profile.text}`}
+        >
+          <img src={profile.image} alt="" className="h-5 w-5 object-contain" aria-hidden="true" />
+          <span>{profile.text}</span>
+        </a>
+      ))}
+    </div>
+  )
+}
+
 export default function Portfolio() {
   const [theme, setTheme] = useState<ThemeMode>('dark')
   const [language, setLanguage] = useState<Language>('pt')
   const [activeSection, setActiveSection] = useState('inicio')
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const emptyMetric: VisitMetric = { totalCount: null, todayCount: null, dashboardUrl: null }
   const [visitStats, setVisitStats] = useState<VisitStats>({
     portfolio: emptyMetric,
     rizzerStudio: emptyMetric,
@@ -300,7 +330,7 @@ export default function Portfolio() {
             rizzerStatsStudioDashboard: 'Dashboard Rizzer',
             footerTitleLine1: 'Vamos',
             footerTitleLine2: 'trabalhar juntos',
-            footerRights: `© ${currentYear} Dev-MatheusFelipe. Todos os direitos reservados.`
+            footerRights: `© ${currentYear} MatheusFelipe.dev. Todos os direitos reservados.`
           }
         : {
             heroRole: 'Digital Product Architect',
@@ -360,7 +390,7 @@ export default function Portfolio() {
             rizzerStatsStudioDashboard: 'Rizzer dashboard',
             footerTitleLine1: "Let's",
             footerTitleLine2: 'work together',
-            footerRights: `© ${currentYear} Dev-MatheusFelipe. All rights reserved.`
+            footerRights: `© ${currentYear} MatheusFelipe.dev. All rights reserved.`
           },
     [language, currentYear]
   )
@@ -432,18 +462,6 @@ export default function Portfolio() {
       }
     }
 
-    const sumCounts = (values: Array<number | null>) => {
-      const valid = values.filter((value): value is number => typeof value === 'number')
-      if (!valid.length) return null
-      return valid.reduce((acc, value) => acc + value, 0)
-    }
-
-    const toMetric = (payload: { totalCount?: number; todayCount?: number; dashboardUrl?: string }): VisitMetric => ({
-      totalCount: typeof payload.totalCount === 'number' ? payload.totalCount : null,
-      todayCount: typeof payload.todayCount === 'number' ? payload.todayCount : null,
-      dashboardUrl: typeof payload.dashboardUrl === 'string' ? payload.dashboardUrl : null
-    })
-
     const loadVisitStats = async () => {
       const env = import.meta.env as Record<string, string | undefined>
       const endpoint = env.VITE_VISITOR_COUNTER_API_URL?.trim() || 'https://visitor.6developer.com/visit'
@@ -481,7 +499,9 @@ export default function Portfolio() {
       const guardKey = `portfolio-visit-posted:${portfolioDomain}:${window.location.pathname}:${dayKey}`
       const alreadyCounted = window.sessionStorage.getItem(guardKey) === '1'
 
-      const portfolioMetric = await safeRequest(async () => {
+      const portfolioCacheKey = `portfolio-visit-cache:${portfolioDomain}`
+      const studioCacheKey = 'portfolio-visit-cache:rizzer-studio'
+      const portfolioMetricRaw = await safeRequest(async () => {
         const response = alreadyCounted
           ? await fetch(`${endpoint}?domain=${encodeURIComponent(portfolioDomain)}`)
           : await fetch(endpoint, {
@@ -510,26 +530,43 @@ export default function Portfolio() {
         return toMetric(data)
       })
 
+      const portfolioMetric = mergeMetricWithFallback(
+        portfolioMetricRaw,
+        readCachedMetric(window.localStorage, portfolioCacheKey)
+      )
+      if (portfolioMetricRaw) {
+        writeCachedMetric(window.localStorage, portfolioCacheKey, portfolioMetricRaw)
+      }
+
       const studioMetricsRaw = await Promise.all(studioDomains.map((domain) => safeRequest(() => requestMetric(domain))))
       const studioMetrics = studioMetricsRaw.filter((item): item is VisitMetric => item !== null)
 
-      const rizzerStudioMetric: VisitMetric = {
-        totalCount: sumCounts(studioMetrics.map((item) => item.totalCount)),
-        todayCount: sumCounts(studioMetrics.map((item) => item.todayCount)),
-        dashboardUrl: studioMetrics.find((item) => item.dashboardUrl)?.dashboardUrl ?? null
+      const liveRizzerStudioMetric: VisitMetric | null = studioMetrics.length
+        ? {
+            totalCount: sumCounts(studioMetrics.map((item) => item.totalCount)),
+            todayCount: sumCounts(studioMetrics.map((item) => item.todayCount)),
+            dashboardUrl: studioMetrics.find((item) => item.dashboardUrl)?.dashboardUrl ?? null
+          }
+        : null
+      const rizzerStudioMetric = mergeMetricWithFallback(
+        liveRizzerStudioMetric,
+        readCachedMetric(window.localStorage, studioCacheKey)
+      )
+      if (liveRizzerStudioMetric) {
+        writeCachedMetric(window.localStorage, studioCacheKey, liveRizzerStudioMetric)
       }
 
       const combinedMetric: VisitMetric = {
-        totalCount: sumCounts([portfolioMetric?.totalCount ?? null, rizzerStudioMetric.totalCount]),
-        todayCount: sumCounts([portfolioMetric?.todayCount ?? null, rizzerStudioMetric.todayCount]),
+        totalCount: sumCounts([portfolioMetric.totalCount, rizzerStudioMetric.totalCount]),
+        todayCount: sumCounts([portfolioMetric.todayCount, rizzerStudioMetric.todayCount]),
         dashboardUrl: null
       }
 
       if (cancelled) return
 
-      const hasAnyData = portfolioMetric !== null || studioMetrics.length > 0
+      const hasAnyData = portfolioMetric.totalCount !== null || rizzerStudioMetric.totalCount !== null
       setVisitStats({
-        portfolio: portfolioMetric ?? { ...emptyMetric },
+        portfolio: portfolioMetric,
         rizzerStudio: rizzerStudioMetric,
         combined: combinedMetric,
         isLoading: false,
@@ -977,7 +1014,7 @@ export default function Portfolio() {
             ))}
           </div>
           <div className="mt-8 text-center" id="resume">
-            <PanelButton href={portfolioLinks.github}>{uiText.aboutButton}</PanelButton>
+            <SocialLogoLinks />
           </div>
         </section>
 
@@ -1036,7 +1073,7 @@ export default function Portfolio() {
           <p className="mx-auto mt-6 max-w-[760px] text-center text-sm leading-relaxed text-[var(--text-title)]/75 sm:text-base">{uiText.skillsNote}</p>
 
           <div className="mt-6 text-center">
-            <PanelButton href={portfolioLinks.rizzerStudio}>{uiText.skillsButton}</PanelButton>
+            <PanelButton href={portfolioLinks.projects}>{uiText.skillsButton}</PanelButton>
           </div>
         </section>
 
@@ -1269,7 +1306,7 @@ export default function Portfolio() {
                     GitHub
                   </a>
                   <a
-                    href="https://www.linkedin.com/in/dev-matheusfelipe/"
+                    href={portfolioLinks.linkedin}
                     target="_blank"
                     rel="noreferrer"
                     className={statsLinkClass}

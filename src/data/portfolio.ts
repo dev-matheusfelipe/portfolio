@@ -1,4 +1,4 @@
-﻿export type PortfolioLinkKey = 'instagram' | 'github' | 'linkedin' | 'rizzerStudio' | 'lab'
+﻿export type PortfolioLinkKey = 'instagram' | 'github' | 'linkedin' | 'rizzerStudio' | 'lab' | 'projects'
 
 export type RouteNode = {
   id: string
@@ -48,9 +48,10 @@ export type SystemModule = {
 export const portfolioLinks: Record<PortfolioLinkKey, string> = {
   instagram: 'https://www.instagram.com/m.f_matheusfelipe',
   github: 'https://github.com/dev-matheusfelipe',
-  linkedin: 'https://www.linkedin.com/in/dev-matheusfelipe',
-  rizzerStudio: 'https://rizzer-studio-site.vercel.app/',
-  lab: 'https://rizzer-studio-site.vercel.app/lab'
+  linkedin: 'https://www.linkedin.com/in/matheus-felipe-040a30140/',
+  rizzerStudio: 'https://rizzer.com.br',
+  lab: 'https://www.rizzer.com.br/lab',
+  projects: 'https://www.rizzer.com.br/projects'
 }
 
 export const heroNodes: RouteNode[] = [
@@ -291,3 +292,4 @@ export const globalRouteConnections: Array<[string, string]> = [
   ['module-ui-systems', 'lab-ops-radar'],
   ['lab-core', 'contact-root']
 ]
+

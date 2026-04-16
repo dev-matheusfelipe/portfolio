@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rizzer-studio-site.vercel.app/sitemap.xml
