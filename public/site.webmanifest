@@ -7,7 +7,7 @@
   "theme_color": "#4FC3F7",
   "icons": [
     {
-      "src": "/images/Logo_Favicon_64x64_Rizzer.png",
+      "src": "/favicon.png",
       "sizes": "64x64",
       "type": "image/png"
     }
