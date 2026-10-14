@@ -29,7 +29,7 @@ const projectCatalog = [
   },
   {
     name: 'Cartão digital',
-    description: 'Contato e redes em um só lugar, com perfis por contexto, QR Code, compartilhamento e download do contato. Preparado para uso com tags NFC.',
+    description: 'Contato e redes em um só lugar, com perfis por contexto, QR Code, compartilhamento e download do contato.',
     category: 'frontend',
     status: 'Em evolução',
     statusTone: 'progress',
