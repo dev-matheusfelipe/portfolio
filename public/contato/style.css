@@ -205,3 +205,24 @@ body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font
 .intro-text,body.light .intro-text{color:var(--muted)}
 body.light .dialog-primary{color:#0E141A}
 body.light .link-icon,body.light .identity>div>p,body.light .project-details>span:last-child,body.light .projects-closing a{color:var(--text)}
+/* Centralização e ajuste mobile do NFC */
+dialog{
+  position:fixed;
+  inset:0;
+  margin:auto;
+  height:fit-content;
+  max-height:calc(100dvh - 32px);
+  overflow:auto;
+  overscroll-behavior:contain;
+}
+#nfc-dialog{padding:30px 24px 24px}
+#nfc-dialog .dialog-nfc{display:none}
+#nfc-dialog h2{font-size:22px;margin:10px 22px 12px 0}
+#nfc-dialog .steps{margin:14px 0}
+#nfc-dialog .steps li{padding:8px 0}
+#nfc-dialog .steps li p{margin:2px 0;font-size:11px}
+#nfc-dialog .nfc-note{font-size:10px!important}
+#nfc-dialog #nfc-unsupported{margin-top:12px;font-size:11px}
+@media(max-width:640px){
+  dialog{width:calc(100% - 32px)}
+}
