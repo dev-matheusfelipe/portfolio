@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oleo+Script:wght@400;700&family=Poppins:wght@400;500;600;700;800&display=swap');500;600&family=Poppins:wght@500;600;700&display=swap');
 
 :root{--bg:#171717;--surface:#1e1e1e;--text:#fff;--muted:#a5a5a5;--line:#343434;--accent:#4fc3f7;--qr:#fff;color-scheme:dark}
 *{box-sizing:border-box}
@@ -193,3 +193,15 @@ body.light .toast{background:#171717;color:#fff}
   .project-grid{grid-template-columns:1fr;gap:14px}
   .project-card{padding:20px 20px 0}
 }
+
+/* Unified portfolio theme */
+:root{--bg:#1A1A1A;--surface:#16181D;--text:#FFFFFF;--muted:#BDC5D3;--line:#2A303C;--accent:#4FC3F7}
+body.light{--bg:#E0E8F6;--surface:#EFF4FC;--text:#484E53;--muted:#667086;--line:#C2CEDF;--accent:#4FC3F7}
+body{font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:16px}
+.brand{font-family:"Oleo Script",cursive;font-size:32px;font-weight:400;letter-spacing:normal;line-height:1}
+.intro-copy h1,.projects-heading h1{font-family:Poppins,sans-serif;font-weight:700;letter-spacing:-.03em}
+.identity h2,.section-heading h2,.share-copy h2,dialog h2{font-family:Poppins,sans-serif;font-weight:700;letter-spacing:-.03em}
+.project-card h2,.contact-action h3,.projects-closing h2{font-family:Poppins,sans-serif;font-weight:600}
+.intro-text,body.light .intro-text{color:var(--muted)}
+body.light .dialog-primary{color:#0E141A}
+body.light .link-icon,body.light .identity>div>p,body.light .project-details>span:last-child,body.light .projects-closing a{color:var(--text)}
