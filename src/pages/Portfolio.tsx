@@ -38,7 +38,7 @@ const navItems = [
   { id: 'services' },
   { id: 'projects' },
   { id: 'contact' }
-]
+] as const
 
 const serviceCardsByLanguage: Record<Language, Array<{ title: string; text: string; image: string }>> = {
   pt: [
@@ -860,13 +860,15 @@ export default function Portfolio() {
             Matheus Felipe
           </a>
 
-          <nav className="hidden items-center gap-8 md:flex">
+          <nav className="hidden items-center gap-5 xl:gap-8 lg:flex">
             {navItems.map((item) => (
               <NavLink key={item.id} href={`#${item.id}`} label={navLabels[item.id]} active={activeSection === item.id} />
             ))}
+            <NavLink href="/projetos/" label={language === 'pt' ? 'Projetos' : 'Projects'} active={false} />
+            <NavLink href="/contato/" label={language === 'pt' ? 'Contato' : 'Contact'} active={false} />
           </nav>
 
-          <div className="hidden items-center gap-6 md:flex">
+          <div className="hidden items-center gap-4 lg:flex">
             <div className="flex items-center gap-2">
               <button
                 type="button"
@@ -906,7 +908,7 @@ export default function Portfolio() {
           <button
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
-            className="inline-flex h-9 w-9 items-center justify-center md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center lg:hidden"
             aria-label={mobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={mobileMenuOpen}
           >
@@ -919,7 +921,7 @@ export default function Portfolio() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="border-t border-[var(--line)]/80 bg-[var(--bg)]/95 px-4 py-4 md:hidden">
+          <div className="border-t border-[var(--line)]/80 bg-[var(--bg)]/95 px-4 py-4 lg:hidden">
             <nav className="flex flex-col gap-3">
               {navItems.map((item) => (
                 <NavLink
@@ -930,6 +932,8 @@ export default function Portfolio() {
                   onClick={() => setMobileMenuOpen(false)}
                 />
               ))}
+              <NavLink href="/projetos/" label={language === 'pt' ? 'Projetos' : 'Projects'} active={false} onClick={() => setMobileMenuOpen(false)} />
+              <NavLink href="/contato/" label={language === 'pt' ? 'Contato' : 'Contact'} active={false} onClick={() => setMobileMenuOpen(false)} />
             </nav>
             <div className="mt-4 flex items-center gap-3">
               <button

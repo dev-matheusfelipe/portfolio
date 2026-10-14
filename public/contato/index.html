@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171717">
+  <meta name="description" content="Portfólio, redes e contato de Matheus Felipe em um só lugar.">
+  <meta property="og:title" content="Matheus Felipe · Contato">
+  <meta property="og:description" content="Conheça meu trabalho, acesse minhas redes e salve meu contato.">
+  <title>Matheus Felipe · Contato</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="qrcode.js" defer></script>
+  <script src="shared.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Página inicial">Matheus Felipe</a>
+    <div class="top-actions">
+      <a href="https://matheusfelipe.dev.br" target="_blank" rel="noopener noreferrer" class="portfolio-nav">Abrir portfólio <span data-icon="arrow"></span></a>
+      <button id="theme" class="icon-button" aria-label="Ativar tema claro"><span data-icon="sun"></span></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="introduction">
+      <div class="intro-copy">
+        <h1>Olá, eu sou<br>Matheus Felipe.</h1>
+        <p class="intro-text">Desenvolvo produtos digitais que conectam tecnologia, design e necessidades reais.</p>
+        <div class="primary-actions">
+          <a href="https://matheusfelipe.dev.br" target="_blank" rel="noopener noreferrer">Conheça meu trabalho <span data-icon="arrow"></span></a>
+          <button id="card-share">Compartilhar contato <span data-icon="share"></span></button>
+        </div>
+      </div>
+
+      <div class="identity">
+        <img src="/images/avatar1.png" alt="Avatar de Matheus Felipe" width="128" height="128">
+        <div>
+          <h2>Matheus Felipe</h2>
+          <p id="role">Desenvolvedor Full Stack</p>
+        </div>
+        <p id="bio" class="bio">Transformo ideias em produtos digitais que conectam pessoas, negócios e tecnologia.</p>
+        <dl class="facts">
+          <div><dt>Localização</dt><dd>Belo Horizonte, MG</dd></div>
+          <div><dt>Estúdio</dt><dd>Rizzer Studio</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="connections" aria-label="Links e compartilhamento">
+      <div class="section-heading">
+        <h2>Onde me encontrar</h2>
+        <p>Escolha o contexto que deseja conhecer.</p>
+      </div>
+
+      <nav class="tabs" aria-label="Tipo de perfil">
+        <button data-profile="professional" class="active" aria-pressed="true">Profissional</button>
+        <button data-profile="personal" aria-pressed="false">Pessoal</button>
+        <button data-profile="studio" aria-pressed="false">Rizzer Studio</button>
+      </nav>
+
+      <div id="links" class="links"></div>
+
+      <div class="contact-action">
+        <div><h3>Salve meu contato</h3><p>Nome, e-mail, portfólio e empresa direto na sua agenda.</p></div>
+        <button id="save-contact">Baixar contato <span data-icon="download"></span></button>
+      </div>
+
+      <div class="share-panel">
+        <div class="share-copy">
+          <h2>Compartilhe este perfil</h2>
+          <p>Abra a câmera de outro celular e aponte para o QR Code. O perfil selecionado será aberto.</p>
+          <div class="share-buttons">
+            <button id="copy-link"><span data-icon="link"></span>Copiar link</button>
+            <button id="share"><span data-icon="share"></span>Compartilhar</button>
+          </div>
+        </div>
+        <button id="qr-open" class="qr-button" aria-label="Ampliar QR Code">
+          <span id="qr-small"></span>
+          <span>Ampliar QR Code</span>
+        </button>
+      </div>
+
+      <button id="nfc-open" class="nfc-row">
+        <span class="nfc-icon" data-icon="nfc"></span>
+        <span><strong>Usar com uma tag NFC</strong><small>Veja como gravar este link em um cartão, adesivo ou chaveiro.</small></span>
+        <span data-icon="arrow"></span>
+      </button>
+    </section>
+  </main>
+
+  <footer>
+    <span>© <span id="year">2026</span> Matheus Felipe</span>
+    <a href="https://matheusfelipe.dev.br" target="_blank" rel="noopener noreferrer">matheusfelipe.dev.br</a>
+  </footer>
+
+  <dialog id="qr-dialog">
+    <button class="dialog-close icon-button" aria-label="Fechar" data-close><span data-icon="close"></span></button>
+    <h2>Abra meu perfil</h2>
+    <p>Aponte a câmera do celular para o QR Code.</p>
+    <div id="qr-large" class="qr-large"></div>
+    <h3>Matheus Felipe</h3>
+    <p id="qr-profile" class="muted"></p>
+    <button id="download-qr" class="dialog-primary"><span data-icon="download"></span>Baixar QR Code</button>
+    <button id="qr-copy" class="text-button">Copiar link</button>
+  </dialog>
+
+  <dialog id="nfc-dialog">
+    <button class="dialog-close icon-button" aria-label="Fechar" data-close><span data-icon="close"></span></button>
+    <span class="dialog-nfc" data-icon="nfc"></span>
+    <h2>Use seu perfil por aproximação</h2>
+    <p>Grave o endereço abaixo em uma tag NFC física. Quando alguém aproximar um celular compatível, poderá abrir este perfil.</p>
+    <ol class="steps">
+      <li><span>1</span><div><strong>Escolha a tag</strong><p>Use um cartão, adesivo ou chaveiro NFC que aceite registros de URL.</p></div></li>
+      <li><span>2</span><div><strong>Grave o endereço</strong><p>Em um aplicativo de gravação NFC, selecione URL e cole o link.</p></div></li>
+      <li><span>3</span><div><strong>Faça um teste</strong><p>Aproxime outro iPhone ou Android compatível antes de usar.</p></div></li>
+    </ol>
+    <label for="nfc-url">Endereço do perfil</label>
+    <div class="url-box"><input id="nfc-url" readonly><button id="nfc-copy" class="icon-button" aria-label="Copiar endereço"><span data-icon="copy"></span></button></div>
+    <p class="nfc-note">A aproximação funciona por meio da tag física. Uma página aberta no navegador não transmite o endereço diretamente para outro celular.</p>
+    <div id="nfc-write-area" hidden>
+      <label class="confirm"><input type="checkbox" id="nfc-confirm">Autorizo substituir o conteúdo da tag que eu aproximar.</label>
+      <button id="nfc-write" class="dialog-primary">Gravar nesta tag</button>
+      <p id="nfc-status" role="status"></p>
+    </div>
+    <p id="nfc-unsupported" class="muted">Este navegador não oferece gravação Web NFC. Use um aplicativo compatível para gravar a tag.</p>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

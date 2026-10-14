@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#171717">
+  <meta name="description" content="Projetos de Matheus Felipe. Conheça aplicações, experimentos e ferramentas com acesso ao site ou código no GitHub.">
+  <meta property="og:title" content="Matheus Felipe · Projetos">
+  <meta property="og:description" content="Aplicações, ferramentas e experimentos. Acesse os projetos e seus repositórios.">
+  <title>Matheus Felipe · Projetos</title>
+  <link rel="icon" href="/contato/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/contato/style.css">
+  <script src="/contato/shared.js" defer></script>
+  <script src="/contato/projects-data.js" defer></script>
+  <script src="/contato/projects.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/contato/" aria-label="Voltar ao cartão digital">Matheus Felipe</a>
+    <div class="top-actions">
+      <a class="portfolio-nav" href="/contato/?perfil=professional">Meu contato <span data-icon="contact"></span></a>
+      <button id="theme" class="icon-button" aria-label="Ativar tema claro"><span data-icon="sun"></span></button>
+    </div>
+  </header>
+  <main class="projects-page">
+    <a class="back-link" href="/contato/?perfil=professional"><span data-icon="arrow"></span> Voltar ao perfil profissional</a>
+    <section class="projects-heading" aria-labelledby="projects-title">
+      <div><h1 id="projects-title">Projetos</h1><p>Ideias que ganham forma em interfaces, ferramentas e produtos digitais.</p></div>
+      <a class="projects-github" href="https://github.com/dev-matheusfelipe" target="_blank" rel="noopener noreferrer">Ver meu GitHub <span data-icon="arrow"></span></a>
+    </section>
+    <section aria-label="Catálogo de projetos">
+      <div class="project-toolbar">
+        <nav id="project-filters" class="tabs" aria-label="Filtrar projetos por área"></nav>
+        <label class="project-search"><span data-icon="search"></span><span class="sr-only">Buscar projeto</span><input id="project-search" type="search" placeholder="Buscar projeto" autocomplete="off"></label>
+      </div>
+      <div id="project-grid" class="project-grid"></div>
+      <div id="project-empty" class="project-empty" hidden><h2>Nenhum projeto encontrado</h2><p>Tente outro nome ou volte para todos os projetos.</p><button id="project-reset">Mostrar todos os projetos</button></div>
+      <p id="project-result" class="project-result" role="status" aria-live="polite"></p>
+      <p class="version-note">Os projetos sem versão publicada aparecem com “Sem versão”.</p>
+    </section>
+    <section class="projects-closing"><h2>Tem uma ideia em mente?</h2><a href="mailto:matheus.f.basilio@gmail.com">Vamos conversar <span data-icon="arrow"></span></a></section>
+  </main>
+  <footer><span>© <span id="year">2026</span> Matheus Felipe</span><a href="https://matheusfelipe.dev.br" target="_blank" rel="noopener noreferrer">matheusfelipe.dev.br</a></footer>
+</body>
+</html>
