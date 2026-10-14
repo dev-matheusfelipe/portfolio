@@ -226,3 +226,31 @@ dialog{
 @media(max-width:640px){
   dialog{width:calc(100% - 32px)}
 }
+
+/* Card do QR Code */
+.qr-button{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  overflow:hidden;
+}
+#qr-small{
+  display:block;
+  background:#fff;
+  border-radius:12px;
+  padding:8px;
+}
+.qr-button #qr-small svg{
+  width:100%;
+  height:auto;
+  margin:auto;
+}
+.qr-button>span:last-child{
+  margin-top:12px;
+  font-size:11px;
+}
+.qr-button:hover{border-color:var(--accent)}
+.qr-large{border-radius:14px}
+#qr-dialog{border-radius:20px}
