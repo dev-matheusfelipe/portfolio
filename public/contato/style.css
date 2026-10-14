@@ -254,3 +254,17 @@ dialog{
 .qr-button:hover{border-color:var(--accent)}
 .qr-large{border-radius:14px}
 #qr-dialog{border-radius:20px}
+
+.nfc-visual{text-align:center;margin:14px 0 20px;color:var(--accent)}
+.nfc-visual svg{display:block;width:160px;height:80px;margin:auto}
+.nfc-visual p{font-size:12px;color:var(--text);margin:8px 0 4px}
+.nfc-visual small{display:block;font-size:10px;line-height:1.5;color:var(--muted)}
+.nfc-wave{animation:nfc-waves 1.8s ease-in-out infinite}
+.wave-two{animation-delay:.2s}
+.wave-three{animation-delay:.4s}
+.nfc-phone{animation:nfc-approach 2.4s ease-in-out infinite}
+@keyframes nfc-waves{0%,100%{opacity:.15}45%{opacity:1}}
+@keyframes nfc-approach{0%,100%{transform:translateX(3px)}50%{transform:translateX(-5px)}}
+@media(prefers-reduced-motion:reduce){
+  .nfc-wave,.nfc-phone{animation:none}
+}
