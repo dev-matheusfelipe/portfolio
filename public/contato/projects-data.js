@@ -5,6 +5,18 @@
 // url: site do projeto ou repositório específico, sempre um endereço válido.
 const projectCatalog = [
   {
+    name: 'Revolts',
+    description: 'Plataforma de publicidade para empresas com ranking por investimento acumulado, filtros por localização e segmento, painel de anunciantes e modo demonstração.',
+    category: 'fullstack',
+    status: 'Demonstração publicada',
+    statusTone: 'available',
+    version: null,
+    url: 'https://revolts.vercel.app/',
+    destination: 'Abrir plataforma',
+    icon: 'studio'
+  },
+
+  {
     name: 'Portfólio pessoal',
     description: 'Minha trajetória, áreas de atuação e trabalho em desenvolvimento de produtos digitais. Um ponto de encontro para conhecer o que faço.',
     category: 'frontend',
